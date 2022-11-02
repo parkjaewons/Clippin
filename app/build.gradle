@@ -13,7 +13,6 @@ android {
         python{
             pip{
                 install "boilerpy3"
-                install "Extractor"
                 install "beautifulsoup4"
                 install "requests"
                 install "Pillow"
@@ -30,7 +29,7 @@ android {
             abiFilters "armeabi-v7a", "arm64-v8a"
         }
         python {
-            buildPython "C:/Users/ParkJaeWon/AppData/Local/Programs/Python/Python310/python.exe"
+            buildPython "/opt/homebrew/bin/python3"
         }
         sourceSets {
             main {
@@ -49,6 +48,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'com.example.testcode'
 }
 
 dependencies {
