@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class Scrap extends AppCompatActivity {
+public class Scrap{
     String Url; //url주소
     String text;//주소 텍스트
     String title;//제목
@@ -49,16 +49,10 @@ public class Scrap extends AppCompatActivity {
 
 
     //값을 추가할때 쓰는 함수, MainActivity에서 addanimal함수에서 사용할 것임.
-    public Scrap(String Url, String text,String title,String description){
-        this.Url = Url;
+    public Scrap(String text, String title, String description, String Url){
         this.text = text;
         this.title = title;
         this.description = description;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scrap);
+        this.Url = Url;
     }
 }

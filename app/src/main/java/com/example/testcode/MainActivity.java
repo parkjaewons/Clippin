@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     String url;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -61,10 +62,19 @@ public class MainActivity extends AppCompatActivity {
             PyObject description = pyobj.callAttr("description", url);
             PyObject Url = pyobj.callAttr("Url", url);
 
-            databaseReference.child("news").child("text").push().setValue(text.toString());
-            databaseReference.child("news").child("title").push().setValue(title.toString());
-            databaseReference.child("news").child("description").push().setValue(description.toString());
-            databaseReference.child("news").child("Url").push().setValue(Url.toString());
+            addScrap(text.toString(),title.toString(),description.toString(),Url.toString());
         }
+    }
+    //값을 파이어베이스 Realtime database로 넘기는 함수
+    public void addScrap(String text, String title, String description, String Url) {
+
+        //여기에서 직접 변수를 만들어서 값을 직접 넣는것도 가능합니다.
+        // ex) 갓 태어난 동물만 입력해서 int age=1; 등을 넣는 경우
+
+        //animal.java에서 선언했던 함수.
+        Scrap Scrap = new Scrap(text,title,description,Url);
+
+        databaseReference.child("news").push().setValue(Scrap);
+
     }
 }
