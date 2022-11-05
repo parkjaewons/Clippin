@@ -70,10 +70,10 @@ public class MainActivity extends AppCompatActivity {
             PyObject title = pyobj.callAttr("title", url);
             PyObject description = pyobj.callAttr("description", url);
             PyObject Url = pyobj.callAttr("Url", url);
-            PyObject keyword = pyobj.callAttr("mmr",text);
+
 
             addScrap(text.toString(),title.toString(),description.toString(),Url.toString());
-            databaseReference.child("key").push().setValue(keyword);
+
 
         }
     }
