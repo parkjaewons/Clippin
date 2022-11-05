@@ -20,6 +20,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.net.URL;
 
@@ -27,6 +30,11 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = database.getReference();
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReference();
+    StorageReference mountainsRef = storageRef.child("mountains.jpg");
+    StorageReference mountainImagesRef = storageRef.child("images/mountains.jpg");
+
     TextView textView;
     String url;
 
@@ -36,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        UploadTask uploadTask = null;
 
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -48,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
-            url = intent.getStringExtra(Intent.EXTRA_TEXT);
+                url = intent.getStringExtra(Intent.EXTRA_TEXT);
             }
         }
 
@@ -61,8 +70,11 @@ public class MainActivity extends AppCompatActivity {
             PyObject title = pyobj.callAttr("title", url);
             PyObject description = pyobj.callAttr("description", url);
             PyObject Url = pyobj.callAttr("Url", url);
+            PyObject keyword = pyobj.callAttr("mmr",text);
 
             addScrap(text.toString(),title.toString(),description.toString(),Url.toString());
+            databaseReference.child("key").push().setValue(keyword);
+
         }
     }
     //값을 파이어베이스 Realtime database로 넘기는 함수
