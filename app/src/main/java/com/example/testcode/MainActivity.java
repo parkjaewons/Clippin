@@ -30,8 +30,10 @@ import java.net.URL;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
@@ -50,25 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder().url("http://127.0.0.1:5000/").build();
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
-                    }
-                });
 
-            }
 
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                TextView textView=findViewById(R.id.textview);
-                textView.setText(response.body().string());
-            }
-        });
 
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -91,11 +76,32 @@ public class MainActivity extends AppCompatActivity {
         if (url != null) {
             PyObject text = pyobj.callAttr("text", url);
             PyObject title = pyobj.callAttr("title", url);
-            PyObject description = pyobj.callAttr("description", url);
+            PyObject description = pyobj.callAttr("descriptDion", url);
             PyObject Url = pyobj.callAttr("Url", url);
-            PyObject imagedown = pyobj.callAttr("image",url);
+
 
             addScrap(text.toString(),title.toString(),description.toString(),Url.toString());
+            RequestBody formbody=new FormBody.Builder().add("text",text.toString()).build();
+
+            Request request = new Request.Builder().url("http://192.168.0.34:5000/keyword").post(formbody).build();
+            okHttpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    TextView textView=findViewById(R.id.textview);
+                    textView.setText(response.body().string());
+                }
+            });
 
 
         }
