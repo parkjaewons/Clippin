@@ -16,8 +16,6 @@ android {
                 install "beautifulsoup4"
                 install "requests"
                 install "Pillow"
-                install "numpy"
-                install "konlpy"
             }
         }
         minSdk 21
@@ -31,7 +29,7 @@ android {
             abiFilters "armeabi-v7a", "arm64-v8a"
         }
         python {
-            buildPython "/opt/homebrew/bin/python3"
+            buildPython "/usr/local/bin/python3.7"//"/opt/homebrew/bin/python3.7"
         }
         sourceSets {
             main {
@@ -63,4 +61,5 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
 }

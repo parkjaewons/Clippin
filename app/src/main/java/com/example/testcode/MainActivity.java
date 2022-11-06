@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
@@ -24,18 +25,20 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.IOException;
 import java.net.URL;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = database.getReference();
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageRef = storage.getReference();
-    StorageReference mountainsRef = storageRef.child("mountains.jpg");
-    StorageReference mountainImagesRef = storageRef.child("images/mountains.jpg");
 
-    TextView textView;
     String url;
 
 
@@ -44,13 +47,33 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        UploadTask uploadTask = null;
+
+
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder().url("http://127.0.0.1:5000/").build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                TextView textView=findViewById(R.id.textview);
+                textView.setText(response.body().string());
+            }
+        });
 
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
 
-        textView = (TextView) findViewById(R.id.textview);
         if (!Python.isStarted()) {
             Python.start(new AndroidPlatform(this));
         }
@@ -70,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             PyObject title = pyobj.callAttr("title", url);
             PyObject description = pyobj.callAttr("description", url);
             PyObject Url = pyobj.callAttr("Url", url);
-
+            PyObject imagedown = pyobj.callAttr("image",url);
 
             addScrap(text.toString(),title.toString(),description.toString(),Url.toString());
 
