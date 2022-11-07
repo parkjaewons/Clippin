@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = database.getReference();
     TextView textView;
-    ImageView imageView1;
     String url;
 
     @Override
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         textView = findViewById(R.id.textview);
         textView.setMovementMethod(new ScrollingMovementMethod());
-        imageView1 = findViewById(R.id.imageView1);
+
 
 
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -86,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
             PyObject title = pyobj.callAttr("title", url);
             PyObject description = pyobj.callAttr("description", url);
             PyObject Url = pyobj.callAttr("Url", url);
-            String imageStr = url;
-            Glide.with(this).load(imageStr).into(imageView1);
+
 
 
             addScrap(text.toString(),title.toString(),description.toString(),Url.toString());
