@@ -29,7 +29,8 @@ android {
             abiFilters "armeabi-v7a", "arm64-v8a"
         }
         python {
-            buildPython "C:/Users/ParkJaeWon/AppData/Local/Programs/Python/Python310/python.exe"//"/opt/homebrew/bin/python3.7"
+            buildPython "/usr/local/bin/python3.7"
+            //"C:/Users/ParkJaeWon/AppData/Local/Programs/Python/Python310/python.exe"//
         }
         sourceSets {
             main {
@@ -52,7 +53,8 @@ android {
 }
 
 dependencies {
-
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'

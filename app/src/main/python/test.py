@@ -52,9 +52,7 @@ def image(url):                 #이미지
 
     image_url = web.find("meta", property="og:image")['content']
 
-    imagedown = Image.save('dsa.jpg')(BytesIO(requests.get(image_url, headers=header).content))
-
-
+    imagedown = Image.open('dsa.jpg')(BytesIO(requests.get(image_url, headers=header).content))
 
     return imagedown
 

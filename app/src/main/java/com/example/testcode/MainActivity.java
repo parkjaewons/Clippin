@@ -1,5 +1,7 @@
 package com.example.testcode;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.loader.content.CursorLoader;
@@ -7,10 +9,13 @@ import androidx.loader.content.CursorLoader;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
@@ -27,6 +32,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,19 +46,21 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = database.getReference();
-
+    TextView textView;
+    ImageView imageView1;
     String url;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        textView = findViewById(R.id.textview);
+        textView.setMovementMethod(new ScrollingMovementMethod());
+        imageView1 = findViewById(R.id.imageView1);
 
 
         OkHttpClient okHttpClient = new OkHttpClient();
-
 
 
         Intent intent = getIntent();
@@ -76,14 +84,16 @@ public class MainActivity extends AppCompatActivity {
         if (url != null) {
             PyObject text = pyobj.callAttr("text", url);
             PyObject title = pyobj.callAttr("title", url);
-            PyObject description = pyobj.callAttr("descriptDion", url);
+            PyObject description = pyobj.callAttr("description", url);
             PyObject Url = pyobj.callAttr("Url", url);
+            String imageStr = url;
+            Glide.with(this).load(imageStr).into(imageView1);
 
 
             addScrap(text.toString(),title.toString(),description.toString(),Url.toString());
-            RequestBody formbody=new FormBody.Builder().add("text",text.toString()).build();
+            RequestBody formbody=new FormBody.Builder().add("text", String.valueOf(title)).build();
 
-            Request request = new Request.Builder().url("http://192.168.0.34:5000/keyword").post(formbody).build();
+            Request request = new Request.Builder().url("http://192.168.0.4:5001/keyword").post(formbody).build();
             okHttpClient.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -98,13 +108,24 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                    TextView textView=findViewById(R.id.textview);
-                    textView.setText(response.body().string());
+
                 }
             });
-
-
         }
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                Log.d(TAG, "Value is: " + map);
+                textView.setText(map.toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
     }
     //값을 파이어베이스 Realtime database로 넘기는 함수
     public void addScrap(String text, String title, String description, String Url) {
@@ -116,6 +137,5 @@ public class MainActivity extends AppCompatActivity {
         Scrap Scrap = new Scrap(text,title,description,Url);
 
         databaseReference.child("news").push().setValue(Scrap);
-
     }
 }
