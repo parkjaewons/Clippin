@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -33,17 +34,18 @@ public class Imageupload extends AppCompatActivity {
     private ProgressBar progressBar;
     private final DatabaseReference root = FirebaseDatabase.getInstance().getReference("Image");
     private final StorageReference reference = FirebaseStorage.getInstance().getReference();
-
+    private Button buttonback;
     private Uri imageUri;
-
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imageupload);
-
+        Button imageListBtn = findViewById(R.id.image_list_btn);
         Button uploadBtn = findViewById(R.id.upload_btn);
         progressBar = findViewById(R.id.progress_view);
         imageview = findViewById(R.id.image_view);
+        buttonback = findViewById(R.id.btn_back);
 
         progressBar.setVisibility(View.INVISIBLE);
 
@@ -66,6 +68,23 @@ public class Imageupload extends AppCompatActivity {
                 }else {
                     Toast.makeText(Imageupload.this,"사진을 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+        buttonback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // SignUpActivity 연결
+                Intent intent = new Intent(Imageupload.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        imageListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // SignUpActivity 연결
+                Intent intent = new Intent(Imageupload.this, Imagelist.class);
+                startActivity(intent);
             }
         });
     }
