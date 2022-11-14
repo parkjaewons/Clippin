@@ -4,34 +4,52 @@ import static android.content.ContentValues.TAG;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.loader.content.CursorLoader;
 
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Intent;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.common.data.SingleRefDataBufferIterator;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -46,19 +64,40 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = database.getReference();
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReference();
+    StorageReference imageRef = storageRef;
     TextView textView;
+    ImageView imageView;
+    TextView textView2;
+    Button buttonupload;
     String url;
+    UploadTask uploadTask;
+    String image_url;
+    private URL url2;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        Uri uri;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textView = findViewById(R.id.textview);
         textView.setMovementMethod(new ScrollingMovementMethod());
+        imageView = (ImageView) findViewById(R.id.imageview);
+        textView2 = findViewById(R.id.textview2);
+        buttonupload = (Button) findViewById(R.id.btn_upload);
 
 
 
+        buttonupload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // SignUpActivity 연결
+                Intent intent = new Intent(MainActivity.this, Imageupload.class);
+                startActivity(intent);
+            }
+        });
         OkHttpClient okHttpClient = new OkHttpClient();
 
 
@@ -85,11 +124,54 @@ public class MainActivity extends AppCompatActivity {
             PyObject title = pyobj.callAttr("title", url);
             PyObject description = pyobj.callAttr("description", url);
             PyObject Url = pyobj.callAttr("Url", url);
+            PyObject image_url = pyobj.callAttr("image", url);
 
+            URL url2 = null;
+            try {
+                url2 = new URL("");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
 
+            uri = Uri.parse(String.valueOf(image_url));
 
+            Glide.with(MainActivity.this).load(uri).into(imageView);
             addScrap(text.toString(),title.toString(),description.toString(),Url.toString());
-            RequestBody formbody=new FormBody.Builder().add("text", String.valueOf(title)).build();
+            RequestBody formbody=new FormBody.Builder().add("text", text.toString()).build();
+
+            StorageReference fileRef = imageRef.child(System.currentTimeMillis() + "." + getFileExtension(uri));
+
+
+
+            /*uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                    Toast.makeText(MainActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });*/
+
+           /* UploadTask uploadTask = fileRef.putFile(uri);
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                            Toast.makeText(MainActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });*/
 
             Request request = new Request.Builder().url("http://192.168.0.4:5001/keyword").post(formbody).build();
             okHttpClient.newCall(request).enqueue(new Callback() {
@@ -99,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+
                         }
                     });
 
@@ -106,6 +189,16 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                textView2.setText(response.body().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
 
                 }
             });
@@ -124,16 +217,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
     }
+
     //값을 파이어베이스 Realtime database로 넘기는 함수
     public void addScrap(String text, String title, String description, String Url) {
 
-        //여기에서 직접 변수를 만들어서 값을 직접 넣는것도 가능합니다.
-        // ex) 갓 태어난 동물만 입력해서 int age=1; 등을 넣는 경우
-
-        //animal.java에서 선언했던 함수.
         Scrap Scrap = new Scrap(text,title,description,Url);
 
         databaseReference.child("news").push().setValue(Scrap);
     }
+    private String getFileExtension(Uri uri){
+        ContentResolver cr = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+
+        return mime.getExtensionFromMimeType(cr.getType(uri));
+    }
+
+
+
 }

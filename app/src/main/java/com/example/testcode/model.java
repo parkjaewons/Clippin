@@ -1,18 +1,21 @@
 package com.example.testcode;
 
+
 public class model {
-    private String imageUri;
+    private String imageuri;
 
-    model(){
+    public model(){
+    }
 
+    public model(String imageuri){
+        this.imageuri=imageuri;
     }
-    public model(String imageUri) {
-        this.imageUri = imageUri;
-    }
+
     public String getImageUri(){
-        return imageUri;
+        return imageuri;
     }
-    public void setImageUri(String imageUri){
-        this.imageUri = imageUri;
+
+    public void setImageUri(String imageuri){
+        this.imageuri = imageuri;
     }
 }

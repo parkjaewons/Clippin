@@ -44,7 +44,8 @@ def Url(url):                   #URL
 
     return Url
 
-def image(url):                 #이미지
+def image(url):
+
 
     header = {'User-Agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'}
 
@@ -52,7 +53,4 @@ def image(url):                 #이미지
 
     image_url = web.find("meta", property="og:image")['content']
 
-    imagedown = Image.open('dsa.jpg')(BytesIO(requests.get(image_url, headers=header).content))
-
-    return imagedown
-
+    return image_url
