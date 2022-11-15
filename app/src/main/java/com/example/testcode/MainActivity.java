@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageView;
     TextView textView2;
     Button buttonupload;
+    Button Scraplist;
     String url;
     UploadTask uploadTask;
     String image_url;
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.imageview);
         textView2 = findViewById(R.id.textview2);
         buttonupload = (Button) findViewById(R.id.btn_upload);
-
+        Scraplist = (Button) findViewById(R.id.btn_scraplist);
 
 
         buttonupload.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +96,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // SignUpActivity 연결
                 Intent intent = new Intent(MainActivity.this, Imageupload.class);
+                startActivity(intent);
+            }
+        });
+
+        Scraplist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // SignUpActivity 연결
+                Intent intent = new Intent(MainActivity.this, ScrapList.class);
                 startActivity(intent);
             }
         });
@@ -194,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             try {
                                 textView2.setText(response.body().string());
+                                databaseReference.child("news").push().setValue(response.body().string());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -208,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
                 Log.d(TAG, "Value is: " + map);
-                textView.setText(map.toString());
             }
 
             @Override
@@ -226,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
         Scrap Scrap = new Scrap(text,title,description,Url);
 
         databaseReference.child("news").push().setValue(Scrap);
+
     }
     private String getFileExtension(Uri uri){
         ContentResolver cr = getContentResolver();

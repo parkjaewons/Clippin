@@ -32,8 +32,15 @@
         android:layout_width="match_parent"
         android:layout_height="37dp"
         android:background="#ffffff"
-
         android:text="이미지 업로드" />
+
+
+    <Button
+        android:id="@+id/btn_scraplist"
+        android:layout_width="match_parent"
+        android:layout_height="37dp"
+        android:background="#ffffff"
+        android:text="스크랩 리스트" />
 
 
 </LinearLayout>
