@@ -1,6 +1,7 @@
 package com.example.testcode;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,7 @@ public class ScrapList extends AppCompatActivity {
 
     RecyclerView recyclerView;
     ScrapAdapter scrapAdapter;
+
 
 
     @SuppressLint("MissingInflatedId")

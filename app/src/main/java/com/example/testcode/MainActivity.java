@@ -67,14 +67,11 @@ public class MainActivity extends AppCompatActivity {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     StorageReference imageRef = storageRef;
-    TextView textView;
     ImageView imageView;
-    TextView textView2;
     Button buttonupload;
     Button Scraplist;
     String url;
     UploadTask uploadTask;
-    String image_url;
     private URL url2;
 
     @SuppressLint("MissingInflatedId")
@@ -83,10 +80,8 @@ public class MainActivity extends AppCompatActivity {
         Uri uri;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = findViewById(R.id.textview);
-        textView.setMovementMethod(new ScrollingMovementMethod());
         imageView = (ImageView) findViewById(R.id.imageview);
-        textView2 = findViewById(R.id.textview2);
+
         buttonupload = (Button) findViewById(R.id.btn_upload);
         Scraplist = (Button) findViewById(R.id.btn_scraplist);
 
@@ -136,20 +131,10 @@ public class MainActivity extends AppCompatActivity {
             PyObject Url = pyobj.callAttr("Url", url);
             PyObject image_url = pyobj.callAttr("image", url);
 
-            URL url2 = null;
-            try {
-                url2 = new URL("");
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
 
-            uri = Uri.parse(String.valueOf(image_url));
+            Glide.with(MainActivity.this).load(image_url.toString()).into(imageView);
 
-            Glide.with(MainActivity.this).load(uri).into(imageView);
-            addScrap(text.toString(),title.toString(),description.toString(),Url.toString());
             RequestBody formbody=new FormBody.Builder().add("text", text.toString()).build();
-
-            StorageReference fileRef = imageRef.child(System.currentTimeMillis() + "." + getFileExtension(uri));
 
 
 
@@ -183,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });*/
 
-            Request request = new Request.Builder().url("http://192.168.0.4:5001/keyword").post(formbody).build();
+            Request request = new Request.Builder().url("http://172.30.88.5:5001/keyword").post(formbody).build();
             okHttpClient.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -202,17 +187,14 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            try {
-                                textView2.setText(response.body().string());
-                                databaseReference.child("news").push().setValue(response.body().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+
                         }
                     });
+                    addScrap(text.toString(),title.toString(),description.toString(),Url.toString(),image_url.toString(),response.body().string());
 
                 }
             });
+
         }
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -231,9 +213,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //값을 파이어베이스 Realtime database로 넘기는 함수
-    public void addScrap(String text, String title, String description, String Url) {
+    public void addScrap(String text, String title, String description, String Url, String image_url, String keyword) {
 
-        Scrap Scrap = new Scrap(text,title,description,Url);
+        Scrap Scrap = new Scrap(text,title,description,Url,image_url,keyword);
 
         databaseReference.child("news").push().setValue(Scrap);
 
@@ -241,7 +223,6 @@ public class MainActivity extends AppCompatActivity {
     private String getFileExtension(Uri uri){
         ContentResolver cr = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
-
         return mime.getExtensionFromMimeType(cr.getType(uri));
     }
 

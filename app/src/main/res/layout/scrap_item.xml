@@ -5,7 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="6dp"
     android:elevation="6dp"
-    app:cardUseCompatPadding="true">
+    app:cardUseCompatPadding="true"
+    android:background="@color/clip">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -49,6 +50,18 @@
             android:layout_marginLeft="10dp"
             android:maxLines="1"
             android:ellipsize="end"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/keyword"
+            android:text="keyword"
+            android:textSize="10sp"
+            android:textColor="#000"
+            android:layout_toRightOf="@+id/img1"
+            android:layout_below="@+id/maintext"
+            android:layout_marginLeft="10dp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -58,7 +71,7 @@
             android:textSize="10sp"
             android:textColor="#000"
             android:layout_toRightOf="@+id/img1"
-            android:layout_below="@+id/maintext"
+            android:layout_below="@+id/keyword"
             android:layout_marginLeft="10dp"
             android:maxLines="1"
             android:ellipsize="end"/>

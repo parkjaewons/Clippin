@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/clip"
     android:orientation="vertical"
-    tools:context=".SignUpActivity">
+    tools:context=".SignUpActivity"
+    >
 
     <TextView
         android:id="@+id/textView_signUpTitle"
@@ -61,8 +62,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@android:color/white"
+        android:background="@drawable/round_button"
         android:text="Join"
-        android:textColor="@android:color/black" />
+        android:textColor="@color/white" />
 
 </LinearLayout>

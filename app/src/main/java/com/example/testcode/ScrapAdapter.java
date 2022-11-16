@@ -1,11 +1,12 @@
 package com.example.testcode;
 
 
-import android.text.method.ScrollingMovementMethod;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,8 +35,29 @@ public class ScrapAdapter extends FirebaseRecyclerAdapter<Scrap,ScrapAdapter.myV
         holder.title.setText(model.gettitle());
         holder.maintext.setText(model.getText());
         holder.url.setText(model.getUrl());
+        holder.keyword.setText(model.getKeyword());
 
+        Glide.with(holder.img.getContext())
+                .load(model.getImage_url())
+                .placeholder(com.firebase.ui.database.R.drawable.common_google_signin_btn_icon_dark)
+                .circleCrop()
+                .error(com.firebase.ui.database.R.drawable.common_google_signin_btn_text_light_normal)
+                .into(holder.img);
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(v.getContext(),Scrap_info.class);
+                intent.putExtra("title",model.gettitle());
+                intent.putExtra("maintext",model.getText());
+                intent.putExtra("url",model.getUrl());
+                intent.putExtra("keyword",model.getKeyword());
+                intent.putExtra("image",model.getImage_url());
+
+                v.getContext().startActivities(new Intent[]{intent});
+            }
+        });
     }
 
     @NonNull
@@ -48,7 +70,7 @@ public class ScrapAdapter extends FirebaseRecyclerAdapter<Scrap,ScrapAdapter.myV
     class myViewHolder extends RecyclerView.ViewHolder{
 
         CircleImageView img;
-        TextView title, maintext, url;
+        TextView title, maintext, url, keyword;
 
         public myViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,8 +79,7 @@ public class ScrapAdapter extends FirebaseRecyclerAdapter<Scrap,ScrapAdapter.myV
             title = (TextView) itemView.findViewById(R.id.titletext);
             maintext = (TextView) itemView.findViewById(R.id.maintext);
             url = (TextView) itemView.findViewById(R.id.url);
-
-            maintext.setMovementMethod(new ScrollingMovementMethod());
+            keyword= (TextView) itemView.findViewById(R.id.keyword);
         }
     }
 }

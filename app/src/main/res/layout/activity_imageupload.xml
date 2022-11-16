@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Imageupload"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/clip">
 
     <ImageView
         android:id="@+id/image_view"
@@ -40,13 +41,16 @@
         android:text="이미지 리스트"
         android:textSize="20sp"/>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_back"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="150dp"
         android:layout_marginEnd="15dp"
-        android:background="#ffffff"
-        android:text="돌아가기" />
+        android:background="@drawable/round_button"
+        android:text="돌아가기"
+        android:textColor="@color/white"
+
+        />
 </LinearLayout>
