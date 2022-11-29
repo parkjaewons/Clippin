@@ -132,8 +132,6 @@ public class MainActivity extends AppCompatActivity {
             PyObject image_url = pyobj.callAttr("image", url);
 
 
-            Glide.with(MainActivity.this).load(image_url.toString()).into(imageView);
-
             RequestBody formbody=new FormBody.Builder().add("text", text.toString()).build();
 
 
@@ -168,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });*/
 
-            Request request = new Request.Builder().url("http://172.30.88.5:5001/keyword").post(formbody).build();
+            Request request = new Request.Builder().url("http://192.168.0.4:5001/keyword").post(formbody).build();
             okHttpClient.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {

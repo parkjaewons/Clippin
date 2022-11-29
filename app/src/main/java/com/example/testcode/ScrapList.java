@@ -32,7 +32,7 @@ public class ScrapList extends AppCompatActivity {
 
         FirebaseRecyclerOptions<Scrap> options =
                 new FirebaseRecyclerOptions.Builder<Scrap>()
-                        .setQuery(FirebaseDatabase.getInstance().getReference().child("news"),Scrap.class).build();
+                        .setQuery(FirebaseDatabase.getInstance().getReference().child("news").orderByChild("title"),Scrap.class).build();
 
         scrapAdapter = new ScrapAdapter(options);
         recyclerView.setAdapter(scrapAdapter);
@@ -72,14 +72,15 @@ public class ScrapList extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void txtSearch(String str){
+    private void txtSearch(String str) {
         FirebaseRecyclerOptions<Scrap> options =
                 new FirebaseRecyclerOptions.Builder<Scrap>()
-                        .setQuery(FirebaseDatabase.getInstance().getReference().child("news").orderByChild("title").startAt(str).endAt(str+"~"),Scrap.class)
+                        .setQuery(FirebaseDatabase.getInstance().getReference().child("news").orderByChild("title").startAt(str).endAt(str + "\uf8ff"), Scrap.class)
                         .build();
 
         scrapAdapter = new ScrapAdapter(options);
         scrapAdapter.startListening();
         recyclerView.setAdapter(scrapAdapter);
+
     }
 }

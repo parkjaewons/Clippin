@@ -12,8 +12,9 @@
     <ImageView
         android:id="@+id/imageview"
         android:layout_width="match_parent"
-        android:layout_height="380dp" />
-
+        android:layout_height="145dp"
+        android:layout_marginTop="100dp"
+        app:srcCompat="@drawable/clip" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_upload"
